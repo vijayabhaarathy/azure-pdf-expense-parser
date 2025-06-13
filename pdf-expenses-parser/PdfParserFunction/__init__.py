@@ -9,7 +9,7 @@ from datetime import datetime
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 # Constants
-STORAGE_CONNECTION_STRING = "<your-storage-connection-string>"
+STORAGE_CONNECTION_STRING = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 INPUT_CONTAINER = "expensesstatements"
 OUTPUT_CONTAINER = "expensesexcel"
 
