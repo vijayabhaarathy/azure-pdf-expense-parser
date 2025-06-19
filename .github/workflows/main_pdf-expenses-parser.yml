@@ -35,13 +35,13 @@ jobs:
         run: |
           cd pdf-expenses-parser
           zip -r ../release.zip . -x "venv/*"
+          cd ..
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,4 +72,5 @@ jobs:
         with:
           app-name: 'pdf-expenses-parser'
           slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          package: './pdf-expenses-parser'
+
