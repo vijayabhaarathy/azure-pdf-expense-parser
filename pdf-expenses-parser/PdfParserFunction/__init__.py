@@ -8,7 +8,7 @@ import os
 from azure.storage.blob import BlobServiceClient, ContainerClient
 from datetime import datetime
 
-logging.info("🔥 Init.py loaded and running!")
+logging.info("🔥 Init.py loaded and running!!")
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
