@@ -72,5 +72,5 @@ jobs:
         with:
           app-name: 'pdf-expenses-parser'
           slot-name: 'Production'
-          package: './pdf-expenses-parser'
+          package: release.zip  
 
