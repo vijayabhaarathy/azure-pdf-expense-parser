@@ -7,6 +7,8 @@ import re
 from azure.storage.blob import BlobServiceClient
 from datetime import datetime
 
+logging.info("🔥 Init.py loaded and running!")
+
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 # Constants
@@ -34,11 +36,34 @@ def PdfParserFunction(req: func.HttpRequest) -> func.HttpResponse:
         blob_client = blob_service_client.get_blob_client(container=INPUT_CONTAINER, blob=blob_name)
         pdf_bytes = blob_client.download_blob().readall()
 
-        # File paths (adjust if needed)
-        axis_pdf = "D:\DSE\Expenses\Axis_Credit Card Statement.pdf"
-        hdfc_diners_pdf = "D:\DSE\Expenses\May2025_Billedstatements_4240_10-06-25_11-58.pdf"
-        hdfc_milli_pdf = "D:\DSE\Expenses\May2025_Billedstatements_8069_10-06-25_11-59.pdf"
-        savings_pdf = "D:\DSE\Expenses\Acct_Statement_XXXXXXXX0344_10062025.pdf"
+        # 3. Connect to input container
+        container_client = ContainerClient.from_connection_string(
+            STORAGE_CONNECTION_STRING,
+            container_name=INPUT_CONTAINER
+        )
+
+        # 4. Loop through all blobs (files)
+        all_transactions = []
+        
+        for blob in container_client.list_blobs():
+            if blob.name.endswith(".pdf"):
+                # Step 3: Read blob content
+                blob_client = container_client.get_blob_client(blob)
+                pdf_bytes = blob_client.download_blob().readall()
+                pdf = pdfplumber.open(io.BytesIO(pdf_bytes))
+        
+                # Step 4: Identify PDF type using filename or content
+                filename = blob.name.lower()
+                if "axis" in filename:
+                    all_transactions.extend(extract_axis_transactions(pdf, "Axis"))
+                elif "4240" in filename:
+                    all_transactions.extend(extract_hdfc_card_transactions(pdf, "HDFC Diners"))
+                elif "8069" in filename:
+                    all_transactions.extend(extract_hdfc_card_transactions(pdf, "HDFC Milli"))
+                elif "acct" in filename or "savings" in filename:
+                    all_transactions.extend(extract_hdfc_savings_transactions(pdf, "HDFC Savings"))
+        
+                pdf.close()
         
         def extract_axis_transactions(pdf_path):
             """
