@@ -32,7 +32,9 @@ jobs:
       # Optional: Run tests here if needed
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip . -x "venv/*"
+        run: |
+          cd pdf-expenses-parser
+          zip -r ../release.zip . -x "venv/*"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
