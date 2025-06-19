@@ -7,70 +7,39 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './pdf-expenses-parser'  # set to your function folder
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './pdf-expenses-parser'  # Your function folder
   PYTHON_VERSION: '3.11'
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write  # Required for Azure login
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python version
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies into build folder
+      - name: 📦 Install dependencies to local function folder
         run: |
           pip install -r pdf-expenses-parser/requirements.txt --target=pdf-expenses-parser/.python_packages/lib/site-packages
 
-      # Optional: Run tests here if needed
-
-      - name: Zip artifact for deployment
-        run: |
-          cd pdf-expenses-parser
-          zip -r ../release.zip . -x "venv/*"
-          cd ..
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-app
-          path: release.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
-
-      - name: Login to Azure
+      - name: 🔐 Azure login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_61ECBCEEE2C349B28E390F3F4AFA7715 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_347A1FDBB5784101977D1884720AC1B2 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A386F8FEB394491283010BB8464662F8 }}
 
-      - name: Deploy to Azure Functions
+      - name: 🚀 Deploy to Azure Functions
         uses: Azure/functions-action@v1
-        id: deploy-to-function
         with:
           app-name: 'pdf-expenses-parser'
           slot-name: 'Production'
-          package: release.zip  
-
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
