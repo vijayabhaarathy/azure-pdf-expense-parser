@@ -28,7 +28,7 @@ jobs:
 
       - name: 📦 Install dependencies to local function folder
         run: |
-          pip install -r pdf-expenses-parser/requirements.txt --target=pdf-expenses-parser/.python_packages/lib/site-packages
+          pip install -r PdfParserFunction/requirements.txt --target=pdf-expenses-parser/.python_packages/lib/site-packages
 
       - name: 🔐 Azure login
         uses: azure/login@v2
