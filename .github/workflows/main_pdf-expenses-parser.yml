@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './pdf-expenses-parser'  # Your function folder
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './PdfParserFunction'  # Corrected folder name
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
 
       - name: 📦 Install dependencies to local function folder
         run: |
-          pip install -r PdfParserFunction/requirements.txt --target=pdf-expenses-parser/.python_packages/lib/site-packages
+          pip install -r PdfParserFunction/requirements.txt --target=PdfParserFunction/.python_packages/lib/site-packages
 
       - name: 🔐 Azure login
         uses: azure/login@v2
@@ -43,4 +43,3 @@ jobs:
           app-name: 'pdf-expenses-parser'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-
