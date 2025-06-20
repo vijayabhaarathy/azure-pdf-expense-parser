@@ -42,5 +42,5 @@ jobs:
         with:
           app-name: 'pdf-expenses-parser'
           slot-name: 'Production'
-          package: ./pdf-expenses-parser
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
 
