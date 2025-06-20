@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './PdfParserFunction'  # Corrected folder name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # Deploy from root
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # Required for Azure login
+      id-token: write
 
     steps:
-      - name: 📥 Checkout repository
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
       - name: 🐍 Set up Python
@@ -26,11 +26,10 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 📦 Install dependencies to local function folder
-        run: |
-          pip install -r PdfParserFunction/requirements.txt --target=PdfParserFunction/.python_packages/lib/site-packages
+      - name: 📦 Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: 🔐 Azure login
+      - name: 🔐 Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_61ECBCEEE2C349B28E390F3F4AFA7715 }}
