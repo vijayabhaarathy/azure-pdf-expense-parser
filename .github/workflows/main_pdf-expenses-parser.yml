@@ -26,8 +26,9 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 📦 Install dependencies
-        run: pip install -r requirements.txt
+      - name: 📦 Install dependencies into function folder
+        run: |
+          pip install -r PdfParserFunction/requirements.txt --target=PdfParserFunction/.python_packages/lib/site-packages
 
       - name: 🔐 Azure Login
         uses: azure/login@v2
