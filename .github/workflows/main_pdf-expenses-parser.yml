@@ -13,6 +13,10 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write     # ✅ Required for OIDC-based login
+      contents: read      # ✅ Required for GitHub Actions
+ 
 
     steps:
       - name: 📥 Checkout repository
