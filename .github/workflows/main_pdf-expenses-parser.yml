@@ -7,30 +7,27 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # Folder that has __init__.py
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'  # Root folder
   PYTHON_VERSION: '3.11'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write  # Required for Azure login
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 📦 Install dependencies into function folder
+      - name: 📦 Install dependencies into .python_packages
         run: |
           pip install -r requirements.txt --target=.python_packages/lib/site-packages
 
-      - name: 🔐 Azure login
+      - name: 🔐 Azure Login via OIDC
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_61ECBCEEE2C349B28E390F3F4AFA7715 }}
@@ -41,5 +38,4 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'pdf-expenses-parser'
-          slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
