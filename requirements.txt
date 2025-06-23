@@ -1,5 +1,0 @@
-azure-functions
-pdfplumber
-pandas
-openpyxl
-azure-storage-blob
